@@ -2,31 +2,33 @@ const router = require("express").Router();
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 // register a new user
 
 router.post("/register", async (req, res) => {
   try {
     // check if user already exists
+    const userExists = await User.findOne({ email: req.body.email });
 
     if (userExists) {
       return res.send({
         success: false,
-        message: "You have an account",
+        message: "User already exists",
       });
     }
+
     // hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
     req.body.password = hashedPassword;
 
     // save a new user
-
     const newUser = new User(req.body);
     await newUser.save();
 
     // return a success message
-    res.send({ success: true, message: "user created successfully" });
+    res.send({ success: true, message: "User created successfully" });
   } catch (error) {
     res.send({
       success: false,
@@ -69,6 +71,24 @@ router.post("/login", async (req, res) => {
       success: true,
       message: "User logged successfully",
       data: token,
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+// get  user details by id
+
+router.get("get-current-user", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.body.userId).select("-password");
+    res.send({
+      success: true,
+      message: "User details fetched successfully",
+      data: user,
     });
   } catch (error) {
     res.send({
