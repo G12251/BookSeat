@@ -30,13 +30,13 @@ const showSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
-    theatre : {
+    cinema : {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'theatres',
+        ref: 'cinema',
         required: true
     },
 } , { timestamps: true });
 
 const Show = mongoose.model('shows', showSchema);
 
-module.exports = Show;
+module.exports = Show; 

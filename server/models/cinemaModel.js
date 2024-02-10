@@ -30,4 +30,4 @@ const cinemaSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("cinemas", cinemaSchema);
+module.exports = mongoose.model("cinema", cinemaSchema);
